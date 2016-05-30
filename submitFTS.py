@@ -8,9 +8,9 @@ from optparse import OptionParser
 
 
 ENDPOINT = 'https://fts3-pilot.cern.ch:8446'
-DEFAULT_SPACETOKEN = "AUGERPROD"
+DEFAULT_SPACETOKEN = None  # "AUGERPROD"
 MAX_NUM_OF_TRANSFERS = 100
-USAGE = "%s source destination filename" % sys.argv[0]
+USAGE = '%prog [options] [-r source destination] filename [filename]*'
 
 transferJobs = []
 
@@ -23,16 +23,9 @@ def createTransferJob(transfers, lib, num):
     return newjob
 
 
-def getPathSuffixes(f, isReplic):
-
+def getPathSuffixes(f):
     source_path_arr = f.split(' ')[0].split('/')
-    if isReplic:
-        dest_path_arr = source_path_arr
-    else:
-        dest_path_arr = f.split(' ')[1].split('/')
-
-    # if 'small.tar' in fs[-1]:
-    #     continue
+    dest_path_arr = source_path_arr
 
     try:
         source_suffix = '/'.join(source_path_arr[source_path_arr.index('home'):])
@@ -44,11 +37,22 @@ def getPathSuffixes(f, isReplic):
     return source_suffix, dest_suffix
 
 
+def getReplicationPaths(f, sourcePref, destinationPref):
+
+    if sourcePref[-1] != '/': sourcePref += '/'
+    if destinationPref[-1] != '/': destinationPref += '/'
+
+    sourceSuffix, destSuffix = getPathSuffixes(f)
+    resultSourceURI = sourcePref + sourceSuffix
+    resultDestinationURI = destinationPref + destSuffix
+
+    return resultSourceURI, resultDestinationURI
+
 if __name__ == "__main__":
     # get user home directory
     home = expanduser("~")
 
-    opts = OptionParser()
+    opts = OptionParser(usage=USAGE)
     opts.add_option('-s', '--endpoint', dest='endpoint', default=ENDPOINT)
     opts.add_option('-S', '--dst-spacetoken', dest='spacetoken', default=DEFAULT_SPACETOKEN)
     opts.add_option('--dry-run', dest='dry_run', default=False, action='store_true')
@@ -59,26 +63,31 @@ if __name__ == "__main__":
     (options, args) = opts.parse_args()
 
     context = fts3.Context(options.endpoint)
-    if len(sys.argv) < 4:
+    if (options.replication and len(args) < 3) or (not options.replication and len(args) < 1):
         print USAGE
         sys.exit(1)
 
-    # failedFiles = open(home + '/failed.files', 'a')
+    if options.replication:
+        sourcePrefix = args[0]
+        destinationPrefix = args[1]
+        fileArgInd = 2
+    else:
+        fileArgInd = 0
 
-    sourcePrefix = sys.argv[1]
-    destinationPrefix = sys.argv[2]
-    for filename in sys.argv[3:]:
+    for filename in args[fileArgInd:]:
         with open(filename) as inputF:
-            files = inputF.readlines()
+            currentFileLines = inputF.readlines()
 
         numOfTransfers = 0
         numOfJobs = 1
         transferList = []
-        for f in files:
-            sourceSuffix, destSuffix = getPathSuffixes(f, options.replication)
-
-            sourceURI = sourcePrefix + sourceSuffix
-            destinationURI = destinationPrefix + destSuffix
+        for curLine in currentFileLines:
+            if options.replication:
+                sourceURI, destinationURI = getReplicationPaths(curLine, sourcePrefix, destinationPrefix)
+            else:
+                lineArr = curLine.split()
+                sourceURI = lineArr[0]
+                destinationURI = lineArr[1]
 
             transfer = fts3.new_transfer(sourceURI, destinationURI)
             transferList.append(transfer)
@@ -107,11 +116,7 @@ if __name__ == "__main__":
 
         # if some jobs were submitted, note their IDs
         if not options.dry_run:
-            with open(home + '/jobIDs', 'a') as f:
-                f.write(filename + '\n')
+            with open(home + '/jobIDs', 'a') as curLine:
+                curLine.write(filename + '\n')
                 for jobID in transferJobs:
-                    f.write('\t' + jobID + '\n')
-
-    # failedFiles.close()
-
-# job_status = fts3.get_job_status(context, jobID, list_files=True)
+                    curLine.write('\t' + jobID + '\n')
