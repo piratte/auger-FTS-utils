@@ -7,7 +7,7 @@ from os.path import expanduser
 from optparse import OptionParser
 
 
-ENDPOINT = 'https://fts3-pilot.cern.ch:8446'
+DEAFUT_ENDPOINT = 'https://fts3-pilot.cern.ch:8446'
 DEFAULT_SPACETOKEN = None  # "AUGERPROD"
 MAX_NUM_OF_TRANSFERS = 100
 USAGE = '%prog [options] [-r source destination] filename [filename]*'
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     home = expanduser("~")
 
     opts = OptionParser(usage=USAGE)
-    opts.add_option('-s', '--endpoint', dest='endpoint', default=ENDPOINT)
+    opts.add_option('-s', '--endpoint', dest='endpoint', default=DEAFUT_ENDPOINT)
     opts.add_option('-S', '--dst-spacetoken', dest='spacetoken', default=DEFAULT_SPACETOKEN)
     opts.add_option('--dry-run', dest='dry_run', default=False, action='store_true')
     opts.add_option('-c', '--checksum', dest='computeChecksum', default=False, action='store_true')
