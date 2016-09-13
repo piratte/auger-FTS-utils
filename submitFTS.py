@@ -84,12 +84,16 @@ if __name__ == "__main__":
         for curLine in currentFileLines:
             if options.replication:
                 sourceURI, destinationURI = getReplicationPaths(curLine, sourcePrefix, destinationPrefix)
+                transfer = fts3.new_transfer(sourceURI, destinationURI)
             else:
                 lineArr = curLine.split()
                 sourceURI = lineArr[0]
-                destinationURI = lineArr[1]
+                destinationURI = lineArr[-1]
+                transfer = fts3.new_transfer(sourceURI, destinationURI)
+                if len(lineArr) > 2:
+                    for lineIndex in range(1, len(lineArr)-1):
+                        fts3.add_alternative_source(transfer, lineArr[lineIndex])
 
-            transfer = fts3.new_transfer(sourceURI, destinationURI)
             transferList.append(transfer)
             numOfTransfers += 1
 
