@@ -8,8 +8,6 @@ from optparse import OptionParser
 
 DEFAULT_LFC_HOST = 'lfc1.egee.cesnet.cz'
 
-DEFAULT_DEST = 'srm://golias100.farm.particle.cz/dpm/farm.particle.cz/home/auger/'
-
 DEFAULT_OUTPUT_FILE = sys.stdout#  'lfc-replication-file'
 
 USAGE = '%prog [options] [-r end_destination] path_prefix'
