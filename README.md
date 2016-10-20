@@ -2,9 +2,9 @@
 
 ## lfc-find-replicas
 
-Usage: `lfc-find-replicas [options] [-r end_destination] path_prefix`
+Usage: `lfc-find-replicas.py [options] [-r end_destination] path_prefix`
 
-This script is used for listing all the files in a subdirectory tree under a specified directory (parameter `path_prefix` 
+This script is used for listing all the files in a subdirectory tree under the specified directory (parameter `path_prefix` 
 and finding their replicas. The motivation for this script was to enable users to easily transfer data from 
 a particular production to one SE. 
  
@@ -13,6 +13,46 @@ The output is by default a list of replicas. When only a list of LFNs is wanted,
 By default the output is printed on console, if the user wants to redirect it, `-o output_file` option can be used.
 
 Because the script was designed to work closely with the other scripts in this repository, the user can define 
-a "destination" by using the `-r destination` option. The output then would be a list of files, one LFN per line. On each line
-the first url would be the current replica (or more if there is more than one available), the last will be the LFN 
-pasted after the destination given by the user. This output is suitable as an input for the script `submitFTS.py`.
+a destination SE by using the `-r end_destination` option. The output then would be a list of files, one line per file. On each line
+the first url would be the current replica (other replicas will follow if available), the last will be the current LFN 
+pasted after the destination given by the user (the destination has to be the whole url prefix e.g. 'srm://golias100.farm.particle.cz/dpm/farm.particle.cz/home/auger/'). 
+This output is suitable as an input for the script `submitFTS.py`. If there is a file, which replica is already at the destination, it won't be listed in the output.
+
+## submitFTS
+
+Usage: `submitFTS.py [options] [-r source destination] filename [filename]*`
+
+This script transforms an input file with urls into one or more FTS jobs. In the input file there should be at least 2 urls per 
+line, the first is recognized as the source, the second as the destination of the transfer. If there are more possible
+source replicas they can be also mentioned in the same line:
+
+`source-replica-url [source-replica-url] destination-replica-url`
+
+When the `-r source destination` switch is used, the script expects the input file to contain only one string per line.
+The string then specifies the url suffix of the file. Source and destination specified as switches parameters are then
+the url prefixes of the source and destination SEs (again, the whole path prefix has to be used in order for the paths to 
+be found). 
+
+Description of the rest of the input parameters is printed out when running the script with the `-h` switch.
+ 
+When the job(s) are submitted, their jobIDs are appended to the file specified by the `-j` switch (default ~/jobIDs).
+
+## registerAndResubmit
+
+Usage: `registerAndResubmit.py [options] jobID`
+
+This script is used to handle the results of the transfer jobs: the files that were transferred successfully should be registered
+ in the LFC, files that were not transferred for various reasons should be resubmitted in another FTS job. The user must specify
+ the jobID. The script will then prompt the user whether it should submit a registration job and a follow-up job, if needed. If
+ the original job is not finished, the script will inform the user and terminate.
+ 
+Description of the rest of the input parameters is printed out when running the script with the `-h` switch.
+
+## Example usage
+
+$ ./lfc-find-replicas.py -o lfc-replication-file -r 'srm://dpm1.egee.cesnet.cz/dpm/cesnet.cz/home/auger' /grid/auger/prod/B2015FixedETIronEpos_gr352/en18.500/th38.000/ 
+$ ./submitFTS.py -s 'https://fts3-kit.gridka.de:8446' lfc-replication-file
+
+\# now a replication job has been submitted (or more, one job per 100 files)
+
+$ ./registerAndResubmit.py -s 'https://fts3-kit.gridka.de:8446' 214b6d0e-8177-11e6-89a0-02163e00a17a
