@@ -49,10 +49,26 @@ This script is used to handle the results of the transfer jobs: the files that w
 Description of the rest of the input parameters is printed out when running the script with the `-h` switch.
 
 ## Example usage
+```
+$ ./lfc-find-replicas.py -o transfer-input-file -r 'srm://golias100.farm.particle.cz/dpm/farm.particle.cz/home/auger/' /grid/auger/prod/B2015FixedETIronEpos_gr352/en18.500/th38.000/095487
 
-$ ./lfc-find-replicas.py -o lfc-replication-file -r 'srm://dpm1.egee.cesnet.cz/dpm/cesnet.cz/home/auger' /grid/auger/prod/B2015FixedETIronEpos_gr352/en18.500/th38.000/ 
-$ ./submitFTS.py -s 'https://fts3-kit.gridka.de:8446' lfc-replication-file
+$ ./submitFTS.py -s "https://fts3-pilot.cern.ch:8446" -j exampleJobIDs -S AUGERPROD transfer-input-file
 
-\# now a replication job has been submitted (or more, one job per 100 files)
+# now a replication job has been submitted (or more, one job per 100 files). Progress of replication can be seen on the endpoints web (usually endpoint address with port 8449)
+$ cat exampleJobIDs 
+transfer-input-file
+	b5dcd6a4-96cd-11e6-b08c-02163e01841b
 
-$ ./registerAndResubmit.py -s 'https://fts3-kit.gridka.de:8446' 214b6d0e-8177-11e6-89a0-02163e00a17a
+# let's check the job before it is done
+$ ./registerAndResubmit.py -s "https://fts3-pilot.cern.ch:8446" b5dcd6a4-96cd-11e6-b08c-02163e01841b
+Sorry, job b5dcd6a4-96cd-11e6-b08c-02163e01841b has not finished yet, its' status is ACTIVE
+
+# after N minutes
+$ ./registerAndResubmit.py -s "https://fts3-pilot.cern.ch:8446" b5dcd6a4-96cd-11e6-b08c-02163e01841b
+The job had problems, its' status is FINISHEDDIRTY
+The registration job is ready now, do you wish to submit it? [Y/n]
+The registration job ID is 1eb23e70-96cf-11e6-b12f-02163e00a39b
+A job(s) for a retry transfer of the untransfered files is ready, do you wish to submit it? [Y/n] N
+
+# from the web interface I saw, that the error on failed transfers was 'Destination file exists and overwrite is not enabled' so I did not submit a retry job
+```
