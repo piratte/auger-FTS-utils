@@ -8,7 +8,7 @@ from optparse import OptionParser
 
 
 DEAFUT_ENDPOINT = 'https://fts3-pilot.cern.ch:8446'
-DEFAULT_SPACETOKEN = None  # "AUGERPROD"
+DEFAULT_SPACETOKEN = ""  # "AUGERPROD"
 MAX_NUM_OF_TRANSFERS = 100
 USAGE = '%prog [options] [-r source destination] filename [filename]*'
 
@@ -57,7 +57,7 @@ if __name__ == "__main__":
                     help='Specify FTS endpoint, default = ' + DEAFUT_ENDPOINT)
     opts.add_option('-S', '--dst-spacetoken', dest='spacetoken', default=DEFAULT_SPACETOKEN,
                     help='Specify the target spacetoken, default: ' + DEFAULT_SPACETOKEN)
-    opts.add_option('-o', '--job-id-file', dest='job-id-file', default=home + '/jobIDs',
+    opts.add_option('-j', '--job-id-file', dest='job-id-file', default=home + '/jobIDs',
                     help='Specify the file to which the jobIDs will be appended, default: ' + home + '/jobIDs')
     opts.add_option('--dry-run', dest='dry_run', default=False, action='store_true',
                     help='Print the json input of the FTS jobs on console')
