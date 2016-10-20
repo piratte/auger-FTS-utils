@@ -52,6 +52,12 @@ if __name__ == "__main__":
 
     opts = OptionParser(usage=USAGE)
     opts.add_option('-s', '--endpoint', dest='endpoint', default=DEAFUT_ENDPOINT)
+    opts.add_option('-j', '--job-id-file', dest='jobIdFile', default=home + '/jobIDs',
+                    help='Specify the file to which the jobIDs will be appended, default: ' + home + '/jobIDs')
+    opts.add_option('--reg-job-id-file', dest='regJobIdFile', default=home + '/regJobIDs',
+                    help='Specify the file to which the jobIDs will be appended, default: ' +home + '/regJobIDs')
+    opts.add_option('--lfc-host', dest='lfcHost', default=LFCHOST,
+                    help='Specify the LFC host, default: ' + LFCHOST)
     (options, args) = opts.parse_args()
 
     if len(args) < 1:
@@ -77,7 +83,7 @@ if __name__ == "__main__":
     for filename in transferedFiles:
         fs = filename.split('/')
         lfcURI = '/'.join(fs[fs.index('grid'):])
-        transfer = fts3.new_transfer(filename, LFCHOST + lfcURI)
+        transfer = fts3.new_transfer(filename, options.lfcHost + lfcURI)
         transferList.append(transfer)
 
     if len(transferList) > 0:
@@ -86,7 +92,7 @@ if __name__ == "__main__":
         if query_yes_no("The registration job is ready now, do you wish to submit it?"):
             jobID = fts3.submit(context, job)
             print "The registration job ID is " + jobID
-            with open('/home/adammar/regJobIDs', 'a') as f:
+            with open(options.regJobIdFile, 'a') as f:
                 f.write('\t' + jobID + '\n')
     notFinishedTransfers = [fts3.new_transfer(f['source_surl'], f['dest_surl']) for f in job_status['files']
                             if f['file_state'] in ['FAILED', 'CANCELED']
@@ -112,7 +118,7 @@ if __name__ == "__main__":
             jobIDs.append(fts3.submit(context, job))
 
         print "The retry job IDs are " + str(jobIDs)
-        with open(home + '/jobIDs', 'a') as output:
+        with open(options.jobIdFile, 'a') as output:
             output.write('Retry for ' + job_id + '\n')
             for jobID in jobIDs:
                 output.write('\t' + jobID + '\n')
