@@ -57,9 +57,9 @@ if __name__ == "__main__":
                     help='Specify FTS endpoint, default = ' + DEAFUT_ENDPOINT)
     opts.add_option('-S', '--dst-spacetoken', dest='spacetoken', default=DEFAULT_SPACETOKEN,
                     help='Specify the target spacetoken, default: ' + DEFAULT_SPACETOKEN)
-    opts.add_option('-j', '--job-id-file', dest='job-id-file', default=home + '/jobIDs',
+    opts.add_option('-j', '--job-id-file', dest='jobIdFile', default=home + '/jobIDs',
                     help='Specify the file to which the jobIDs will be appended, default: ' + home + '/jobIDs')
-    opts.add_option('--dry-run', dest='dry_run', default=False, action='store_true',
+    opts.add_option('--dry-run', dest='dryRun', default=False, action='store_true',
                     help='Print the json input of the FTS jobs on console')
     opts.add_option('-c', '--checksum', dest='computeChecksum', default=False, action='store_true',
                     help='Enforce checksum checks')
@@ -106,7 +106,7 @@ if __name__ == "__main__":
             if numOfTransfers > MAX_NUM_OF_TRANSFERS:
                 numOfTransfers = 0
                 job = createTransferJob(transferList, filename, str(numOfJobs))
-                if options.dry_run:
+                if options.dryRun:
                     print json.dumps(job, indent=2)
                     jobID = 'abc'
                 else:
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
         # submit the last job
         job = createTransferJob(transferList, filename, str(numOfJobs) + " last")
-        if options.dry_run:
+        if options.dryRun:
             print json.dumps(job, indent=2)
             jobID = 'abc'
         else:
@@ -125,8 +125,8 @@ if __name__ == "__main__":
         transferJobs.append(jobID)
 
         # if some jobs were submitted, note their IDs
-        if not options.dry_run:
-            with open(options.job-id-file, 'a') as curLine:
+        if not options.dryRun:
+            with open(options.jobIdFile, 'a') as curLine:
                 curLine.write(filename + '\n')
                 for jobID in transferJobs:
                     curLine.write('\t' + jobID + '\n')

@@ -34,7 +34,7 @@ if __name__ == "__main__":
     opts = OptionParser(usage=USAGE)
     opts.add_option('-r', '--replication', dest='destination',
                     help='Generate a file with source and destination using this destination')
-    opts.add_option('-L', '--lfns-only', dest='only_lfns', default=False, action='store_true',
+    opts.add_option('-L', '--lfns-only', dest='onlyLfns', default=False, action='store_true',
                     help='The output will be only lfns, not sfns, of all the files in the specified dir subtree')
     opts.add_option('-o', '--outputFile', dest='outFile')
     (options, args) = opts.parse_args()
@@ -77,7 +77,7 @@ if __name__ == "__main__":
             lfns.append(parent_dir + "/" + filter(None, line.split(" "))[-1])
 
     # only a file of lfns is wanted -> print to file and exit
-    if options.only_lfns:
+    if options.onlyLfns:
         # print "Obtained a list of %d lfns, now printing to file" % len(lfns)
         with open(options.outFile, 'w') if options.outFile and options.outFile is not '-' else sys.stdout as output:
             output.writelines([lfn + '\n' for lfn in lfns])
