@@ -57,6 +57,8 @@ if __name__ == "__main__":
                     help='Specify FTS endpoint, default = ' + DEAFUT_ENDPOINT)
     opts.add_option('-S', '--dst-spacetoken', dest='spacetoken', default=DEFAULT_SPACETOKEN,
                     help='Specify the target spacetoken, default: ' + DEFAULT_SPACETOKEN)
+    opts.add_option('-o', '--job-id-file', dest='job-id-file', default=home + '/jobIDs',
+                    help='Specify the file to which the jobIDs will be appended, default: ' + home + '/jobIDs')
     opts.add_option('--dry-run', dest='dry_run', default=False, action='store_true',
                     help='Print the json input of the FTS jobs on console')
     opts.add_option('-c', '--checksum', dest='computeChecksum', default=False, action='store_true',
@@ -124,7 +126,7 @@ if __name__ == "__main__":
 
         # if some jobs were submitted, note their IDs
         if not options.dry_run:
-            with open(home + '/jobIDs', 'a') as curLine:
+            with open(options.job-id-file, 'a') as curLine:
                 curLine.write(filename + '\n')
                 for jobID in transferJobs:
                     curLine.write('\t' + jobID + '\n')
