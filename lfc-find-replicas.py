@@ -50,6 +50,8 @@ if __name__ == "__main__":
     lfc_path_prefix = args[0]
     if lfc_path_prefix[-1] == '/':
         parent_dir = lfc_path_prefix[:-1]
+    else:
+        parent_dir = lfc_path_prefix
     full_output, full_error = get_shell_output("lfc-ls -lR %s" % parent_dir)
 
     if full_error:
