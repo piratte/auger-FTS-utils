@@ -55,7 +55,8 @@ if __name__ == "__main__":
     opts = OptionParser(usage=USAGE)
     opts.add_option('-s', '--endpoint', dest='endpoint', default=DEAFUT_ENDPOINT,
                     help='Specify FTS endpoint, default = ' + DEAFUT_ENDPOINT)
-    opts.add_option('-S', '--dst-spacetoken', dest='spacetoken', default=DEFAULT_SPACETOKEN)
+    opts.add_option('-S', '--dst-spacetoken', dest='spacetoken', default=DEFAULT_SPACETOKEN,
+                    help='Specify the target spacetoken, default: ' + DEFAULT_SPACETOKEN)
     opts.add_option('--dry-run', dest='dry_run', default=False, action='store_true',
                     help='Print the json input of the FTS jobs on console')
     opts.add_option('-c', '--checksum', dest='computeChecksum', default=False, action='store_true',
