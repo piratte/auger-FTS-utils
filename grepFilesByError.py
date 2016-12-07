@@ -5,8 +5,18 @@ import fts3.rest.client.easy as fts3
 import os
 from optparse import OptionParser
 
-USAGE = '%prog [options] jobID error[ error] (surround the errors in quotes)'
+USAGE = '%prog [options] jobID error [error] (surround the errors in quotes)'
 DEAFUT_ENDPOINT = 'https://fts3-pilot.cern.ch:8446'
+
+
+def sanitize_error(error):
+    """
+    Remove the multiple whitespaces inside the error, as well as the leading and trailing ones.
+    :param error: String to be sanitized
+    :return: Sanitized string
+    """
+    # FIXME: doesn't work
+    return " ".join(error.split())
 
 if __name__ == "__main__":
     opts = OptionParser(usage=USAGE)
@@ -19,12 +29,15 @@ if __name__ == "__main__":
     (options, args) = opts.parse_args()
 
     # get the jobID as the last parameter
-    if len(args) < 2 or options.uniq:
+    if len(args) < 2 and not options.uniq:
         opts.print_usage()
         sys.exit(1)
     job_id = args[0]
 
-    if not options.uniq: reasons = args[1:]
+    reasons = []
+    if not options.uniq:
+        for r in args[1:]:
+            reasons.append(sanitize_error(r))
 
     context = fts3.Context(options.endpoint)
 
@@ -46,10 +59,12 @@ if __name__ == "__main__":
         notTransferedFiles = [(f['source_surl'], f['dest_surl']) for f in job_status['files']
                               if f['file_state'] in ['FAILED', 'CANCELED']
                               and f['reason'] not in reasons]
+                              #and sanitize_error(f['reason']) not in reasons]
     else:
         notTransferedFiles = [(f['source_surl'], f['dest_surl']) for f in job_status['files']
                               if f['file_state'] in ['FAILED', 'CANCELED']
                               and f['reason'] in reasons]
+                              #and sanitize_error(f['reason']) in reasons]
 
     for fileTuple in notTransferedFiles:
         print "%s %s" % fileTuple

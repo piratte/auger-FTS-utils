@@ -72,3 +72,17 @@ A job(s) for a retry transfer of the untransfered files is ready, do you wish to
 
 # from the web interface I saw, that the error on failed transfers was 'Destination file exists and overwrite is not enabled' so I did not submit a retry job
 ```
+
+## grepFileByError
+
+Usage: `grepFileByError.py [options] jobID error[ error]`
+
+The script is used to extract transfers that failed due to a particular error. The user can describe multiple error in 
+form of a space separated list (each error reason should be surrounded in quotes). The script outputs the pairs of 
+source destination SURLs, so it can be easily used as output of the `submitFTS` script. The output is printed 
+on the console.
+
+If the user is not sure about the correct phrasing of the error, the script shall be ran with the `-u` option, which
+prints all the error reasons encountered in that job.
+
+Description of the rest of the input parameters is printed out when running the script with the `-h` switch.
