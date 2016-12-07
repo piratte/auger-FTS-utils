@@ -19,11 +19,12 @@ if __name__ == "__main__":
     (options, args) = opts.parse_args()
 
     # get the jobID as the last parameter
-    if len(args) < 2:
+    if len(args) < 2 or options.uniq:
         opts.print_usage()
         sys.exit(1)
     job_id = args[0]
-    reasons = args[1:]
+
+    if not options.uniq: reasons = args[1:]
 
     context = fts3.Context(options.endpoint)
 
