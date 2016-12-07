@@ -13,6 +13,8 @@ if __name__ == "__main__":
     opts.add_option('-s', '--endpoint', dest='endpoint', default=DEAFUT_ENDPOINT)
     opts.add_option('-v', '--invert-match', dest='invert', default=False, action='store_true',
                     help='Invert the sense of matching, to select files with non-matching errors')
+    opts.add_option('-u', '--unique', dest='uniq', default=False, action='store_true',
+                    help='Print all the errors, that occured in the job')
 
     (options, args) = opts.parse_args()
 
@@ -30,10 +32,14 @@ if __name__ == "__main__":
         print "Sorry, job %s has not finished yet, its' status is %s" % (job_id, job_status['job_state'])
         sys.exit(0)
 
-    #for f in job_status['files']:
-    #    if f['file_state'] in ['FAILED', 'CANCELED']:
-    #        print f['reason']
-    #sys.exit(0)
+    if options.uniq:
+        reasons = []
+        for f in job_status['files']:
+            if f['file_state'] in ['FAILED', 'CANCELED']:
+                reasons.append(f['reason'])
+        for r in set(reasons):
+            print r
+        sys.exit(0)
 
     if options.invert:
         notTransferedFiles = [(f['source_surl'], f['dest_surl']) for f in job_status['files']
