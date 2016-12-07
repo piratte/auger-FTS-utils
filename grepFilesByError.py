@@ -30,6 +30,10 @@ if __name__ == "__main__":
         print "Sorry, job %s has not finished yet, its' status is %s" % (job_id, job_status['job_state'])
         sys.exit(0)
 
+    for f in job_status['files']:
+        if f['file_state'] in ['FAILED', 'CANCELED']:
+            print f['reason']
+    sys.exit(0)
     if options.invert:
         notTransferedFiles = [(f['source_surl'], f['dest_surl']) for f in job_status['files']
                               if f['file_state'] in ['FAILED', 'CANCELED']
