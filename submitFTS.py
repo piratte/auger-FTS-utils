@@ -9,7 +9,7 @@ from optparse import OptionParser
 
 DEAFUT_ENDPOINT = 'https://fts3-pilot.cern.ch:8446'
 DEFAULT_SPACETOKEN = ""  # "AUGERPROD"
-MAX_NUM_OF_TRANSFERS = 100
+MAX_NUM_OF_TRANSFERS = 500
 USAGE = '%prog [options] [-r source destination] filename [filename]*'
 
 transferJobs = []

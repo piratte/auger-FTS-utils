@@ -8,7 +8,7 @@ from optparse import OptionParser
 LFCHOST = "lfc://lfc1.egee.cesnet.cz/"
 DEAFUT_ENDPOINT = 'https://fts3-pilot.cern.ch:8446'
 
-MAX_NUM_OF_TRANSFERS = 100
+MAX_NUM_OF_TRANSFERS = 500
 
 USAGE = '%prog [options] jobID'
 
