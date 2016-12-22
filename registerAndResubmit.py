@@ -82,7 +82,13 @@ if __name__ == "__main__":
     transferList = []
     for filename in transferedFiles:
         fs = filename.split('/')
-        lfcURI = '/'.join(fs[fs.index('grid'):])
+        try:
+            lfcURI = '/'.join(fs[fs.index('grid')+1:])
+        except ValueError:  # substring 'grid' not found
+            # get the last occurrence of auger in the path
+            lfcURI = '/'.join(fs[len(fs) - 1 - fs[::-1].index('auger'):])
+        # note that this path construction is not particularly liable and should be upgraded in the future
+
         transfer = fts3.new_transfer(filename, options.lfcHost + lfcURI)
         transferList.append(transfer)
 
