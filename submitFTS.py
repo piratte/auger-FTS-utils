@@ -15,10 +15,10 @@ USAGE = '%prog [options] [-r source destination] filename [filename]*'
 transferJobs = []
 
 
-def createTransferJob(transfers, lib, num):
+def createTransferJob(transfers, lib, num, overwrite):
     label = 'Library %s part %s' % (lib, num)
     newjob = fts3.new_job(transfers, metadata=label, retry=3, spacetoken=options.spacetoken, reuse=False,
-                          verify_checksum=options.computeChecksum)
+                          verify_checksum=options.computeChecksum, overwrite=overwrite)
     newjob['params']["timeout"] = 7200
     return newjob
 
@@ -63,6 +63,8 @@ if __name__ == "__main__":
                     help='Print the json input of the FTS jobs on console')
     opts.add_option('-c', '--checksum', dest='computeChecksum', default=False, action='store_true',
                     help='Enforce checksum checks')
+    opts.add_option('-o', '--overwrite', dest='overwriteFlag', default=False, action='store_true',
+                    help='Enforce overwritting files')
     opts.add_option('-r', '--replication', dest='replication', default=False, action='store_true',
                     help='The input file contains only one filename per line. '
                          'The file should be copied to the same path on a different SE')
@@ -105,7 +107,7 @@ if __name__ == "__main__":
 
             if numOfTransfers > MAX_NUM_OF_TRANSFERS:
                 numOfTransfers = 0
-                job = createTransferJob(transferList, filename, str(numOfJobs))
+                job = createTransferJob(transferList, filename, str(numOfJobs), options.overwriteFlag)
                 if options.dryRun:
                     print json.dumps(job, indent=2)
                     jobID = 'abc'
@@ -116,7 +118,7 @@ if __name__ == "__main__":
                 transferList = []
 
         # submit the last job
-        job = createTransferJob(transferList, filename, str(numOfJobs) + " last")
+        job = createTransferJob(transferList, filename, str(numOfJobs) + " last", options.overwriteFlag)
         if options.dryRun:
             print json.dumps(job, indent=2)
             jobID = 'abc'
