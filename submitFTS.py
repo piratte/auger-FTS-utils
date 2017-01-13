@@ -63,8 +63,8 @@ if __name__ == "__main__":
                     help='Print the json input of the FTS jobs on console')
     opts.add_option('-c', '--checksum', dest='computeChecksum', default=False, action='store_true',
                     help='Enforce checksum checks')
-    opts.add_option('-o', '--overwrite', dest='overwriteFlag', default=False, action='store_true',
-                    help='Enforce overwritting files')
+    opts.add_option('-O', '--overwrite', dest='overwriteFlag', default=False, action='store_true',
+                    help='Enforce overwritting files (necessary for a registration job)')
     opts.add_option('-r', '--replication', dest='replication', default=False, action='store_true',
                     help='The input file contains only one filename per line. '
                          'The file should be copied to the same path on a different SE')
