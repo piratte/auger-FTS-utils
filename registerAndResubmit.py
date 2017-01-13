@@ -6,7 +6,7 @@ import os
 from optparse import OptionParser
 
 LFCHOST = "lfc://lfc1.egee.cesnet.cz/"
-DEAFUT_ENDPOINT = 'https://fts3-pilot.cern.ch:8446'
+DEFAULT_ENDPOINT = 'https://fts3-pilot.cern.ch:8446'
 
 MAX_NUM_OF_TRANSFERS = 500
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     home = os.path.expanduser('~')
 
     opts = OptionParser(usage=USAGE)
-    opts.add_option('-s', '--endpoint', dest='endpoint', default=DEAFUT_ENDPOINT)
+    opts.add_option('-s', '--endpoint', dest='endpoint', default=DEFAULT_ENDPOINT)
     opts.add_option('-j', '--job-id-file', dest='jobIdFile', default=home + '/jobIDs',
                     help='Specify the file to which the jobIDs will be appended, default: ' + home + '/jobIDs')
     opts.add_option('--reg-job-id-file', dest='regJobIdFile', default=home + '/regJobIDs',
