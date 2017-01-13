@@ -83,7 +83,7 @@ if __name__ == "__main__":
     for filename in transferedFiles:
         fs = filename.split('/')
         try:
-            lfcURI = '/'.join(fs[fs.index('grid')+1:])
+            lfcURI = '/'.join(fs[fs.index('grid'):])
         except ValueError:  # substring 'grid' not found
             # get the last occurrence of auger in the path
             lfcURI = '/'.join(fs[len(fs) - 1 - fs[::-1].index('auger'):])
