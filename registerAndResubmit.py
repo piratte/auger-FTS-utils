@@ -3,7 +3,7 @@
 import sys
 import fts3.rest.client.easy as fts3
 import os
-from optparse import OptionParser
+from optparse import OptionParser, OptionGroup
 
 LFCHOST = "lfc://lfc1.egee.cesnet.cz/"
 DEFAULT_ENDPOINT = 'https://fts3-pilot.cern.ch:8446'
@@ -11,7 +11,6 @@ DEFAULT_ENDPOINT = 'https://fts3-pilot.cern.ch:8446'
 MAX_NUM_OF_TRANSFERS = 500
 
 USAGE = '%prog [options] jobID'
-
 
 
 def query_yes_no(question, default="yes"):
@@ -55,9 +54,20 @@ if __name__ == "__main__":
     opts.add_option('-j', '--job-id-file', dest='jobIdFile', default=home + '/jobIDs',
                     help='Specify the file to which the jobIDs will be appended, default: ' + home + '/jobIDs')
     opts.add_option('--reg-job-id-file', dest='regJobIdFile', default=home + '/regJobIDs',
-                    help='Specify the file to which the jobIDs will be appended, default: ' +home + '/regJobIDs')
+                    help='Specify the file to which the jobIDs will be appended, default: ' + home + '/regJobIDs')
     opts.add_option('--lfc-host', dest='lfcHost', default=LFCHOST,
                     help='Specify the LFC host, default: ' + LFCHOST)
+
+    loop_options = OptionGroup(opts, "Loop options", "Options enabling the script to be used in a shell skript loop")
+    loop_options.add_option('--all-register', dest='register', action='store_const', const=1,
+                            help='Automatically register all files')
+    loop_options.add_option('--all-resubmit', dest='resubmit', action='store_const', const=1,
+                            help='Automatically resubmit all failed transfers')
+    loop_options.add_option('--none-register', dest='register', action='store_const', const=-1, default=0,
+                            help='Do not register none files')
+    loop_options.add_option('--none-resubmit', dest='resubmit', action='store_const', const=-1, default=0,
+                            help='Do not resubmit any failed transfers')
+    opts.add_option_group(loop_options)
     (options, args) = opts.parse_args()
 
     if len(args) < 1:
@@ -95,7 +105,7 @@ if __name__ == "__main__":
     if len(transferList) > 0:
         job = fts3.new_job(transferList, metadata="Registration of the files transfered by job " + job_id,
                            overwrite=True)
-        if query_yes_no("The registration job is ready now, do you wish to submit it?"):
+        if options.register == 1 or options.register == 0 and query_yes_no("The registration job is ready now, do you wish to submit it?"):
             jobID = fts3.submit(context, job)
             print "The registration job ID is " + jobID
             with open(options.regJobIdFile, 'a') as f:
@@ -118,7 +128,8 @@ if __name__ == "__main__":
         # double the internal transfer timeout
         newjob['params']["timeout"] = 7200
         jobs.append(newjob)
-    if query_yes_no("A job(s) for a retry transfer of the untransfered files is ready, do you wish to submit it?"):
+    if options.resubmit == 1 or options.resubmit == 0 and query_yes_no("A job(s) for a retry transfer of the untransfered "
+                                                                       "files is ready, do you wish to submit it?"):
         jobIDs = []
         for job in jobs:
             jobIDs.append(fts3.submit(context, job))
