@@ -31,11 +31,14 @@ source replicas they can be also mentioned in the same line:
 When the `-r source destination` switch is used, the script expects the input file to contain only one string per line.
 The string then specifies the url suffix of the file. Source and destination specified as switches parameters are then
 the url prefixes of the source and destination SEs (again, the whole path prefix has to be used in order for the paths to 
-be found). 
+be found). **ATTENTION**: When used, this switch has to be the last switch before the filenames.
 
 Description of the rest of the input parameters is printed out when running the script with the `-h` switch.
  
 When the job(s) are submitted, their jobIDs are appended to the file specified by the `-j` switch (default ~/jobIDs).
+
+When using this command to submit a job, that registers files into the LFC, the option `-O` or `--overwrite` has to be used
+(reason for this is the implementation of the LFC plugin for FTS). This option is optional for regular file transfers.
 
 ## registerAndResubmit
 
