@@ -124,7 +124,7 @@ if __name__ == "__main__":
     for chunkOfTransfers in jobChunks:
         newjob = fts3.new_job(chunkOfTransfers, spacetoken=job_status['space_token'],
                               overwrite=job_status['overwrite_flag'], retry=job_status['retry'],
-                              reuse=job_status['reuse_job'], metadata=job_status['job_metadata'], verify_checksum=False)
+                              metadata=job_status['job_metadata'], verify_checksum=False)
         # double the internal transfer timeout
         newjob['params']["timeout"] = 7200
         jobs.append(newjob)
