@@ -51,6 +51,7 @@ if __name__ == "__main__":
 
     opts = OptionParser(usage=USAGE)
     opts.add_option('-s', '--endpoint', dest='endpoint', default=DEFAULT_ENDPOINT)
+    opts.add_option('--registraion-endpoint', dest='reg_endpoint', default=False)
     opts.add_option('-j', '--job-id-file', dest='jobIdFile', default=home + '/jobIDs',
                     help='Specify the file to which the jobIDs will be appended, default: ' + home + '/jobIDs')
     opts.add_option('--reg-job-id-file', dest='regJobIdFile', default=home + '/regJobIDs',
@@ -76,6 +77,8 @@ if __name__ == "__main__":
     job_id = args[0]
 
     context = fts3.Context(options.endpoint)
+    if options.reg_endpoint:
+        reg_context = fts3.Context(options.reg_endpoint)
 
     job_status = fts3.get_job_status(context, job_id, list_files=True)
     if job_status['job_state'] not in ['FINISHED', 'FINISHEDDIRTY', 'CANCELED', 'FAILED']:
@@ -106,7 +109,7 @@ if __name__ == "__main__":
         job = fts3.new_job(transferList, metadata="Registration of the files transfered by job " + job_id,
                            overwrite=True)
         if options.register == 1 or options.register == 0 and query_yes_no("The registration job is ready now, do you wish to submit it?"):
-            jobID = fts3.submit(context, job)
+            jobID = fts3.submit(reg_context, job) if options.reg_endpoint else fts3.submit(context, job)
             print "The registration job ID is " + jobID
             with open(options.regJobIdFile, 'a') as f:
                 f.write('\t' + jobID + '\n')
