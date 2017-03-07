@@ -7,7 +7,7 @@ from optparse import OptionParser
 from pprint import pprint
 import re
 
-USAGE = '%prog [options] jobID error [error] (surround the errors in quotes)'
+USAGE = '%prog [options] jobID error_regexp'
 DEAFUT_ENDPOINT = 'https://fts3-pilot.cern.ch:8446'
 
 

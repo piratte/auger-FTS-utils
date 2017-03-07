@@ -78,14 +78,13 @@ A job(s) for a retry transfer of the untransfered files is ready, do you wish to
 
 ## grepFileByError
 
-Usage: `grepFileByError.py [options] jobID error[ error]`
+Usage: `grepFileByError.py [options] jobID error_regexp`
 
-The script is used to extract transfers that failed due to a particular error. The user can describe multiple error in 
-form of a space separated list (each error reason should be surrounded in quotes). The script outputs the pairs of 
-source destination SURLs, so it can be easily used as output of the `submitFTS` script. The output is printed 
+The script is used to extract transfers that failed due to a particular error. The error description should be in the 
+form of a regural expression. The script outputs the pairs of 
+source destination SURLs, thus it can be easily used as output of the `submitFTS` script. The output is printed 
 on the console.
 
-If the user is not sure about the correct phrasing of the error, the script shall be ran with the `-u` option, which
-prints all the error reasons encountered in that job.
+If the user can find out all the distinct errors, that occurred during the jobs transfers using the `-u` option. 
 
 Description of the rest of the input parameters is printed out when running the script with the `-h` switch.
