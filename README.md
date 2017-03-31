@@ -51,7 +51,23 @@ This script is used to handle the results of the transfer jobs: the files that w
  
 Description of the rest of the input parameters is printed out when running the script with the `-h` switch.
 
+
+## grepFileByError
+
+Usage: `grepFileByError.py [options] jobID error_regexp`
+
+The script is used to extract transfers that failed due to a particular error. The error description should be in the 
+form of a regural expression. The script outputs the pairs of 
+source destination SURLs, thus it can be easily used as output of the `submitFTS` script. The output is printed 
+on the console.
+
+If the user can find out all the distinct errors, that occurred during the jobs transfers using the `-u` option. 
+
+Description of the rest of the input parameters is printed out when running the script with the `-h` switch.
+
 ## Example usage
+
+### Tranfer example
 ```
 $ ./lfc-find-replicas.py -o transfer-input-file -r 'srm://golias100.farm.particle.cz/dpm/farm.particle.cz/home/auger/' /grid/auger/prod/B2015FixedETIronEpos_gr352/en18.500/th38.000/095487
 
@@ -76,15 +92,11 @@ A job(s) for a retry transfer of the untransfered files is ready, do you wish to
 # from the web interface I saw, that the error on failed transfers was 'Destination file exists and overwrite is not enabled' so I did not submit a retry job
 ```
 
-## grepFileByError
+### Manual registration example
 
-Usage: `grepFileByError.py [options] jobID error_regexp`
+```bash
+$ ./submitFTS.py --overwrite -s 'https://fts3-devel.cern.ch:8446' -j ~/job.ids -r 'srm://dpm1.egee.cesnet.cz/dpm/cesnet.cz/home/auger/grid/auger/prod/' 'lfc://lfc1.egee.cesnet.cz/grid/auger/prod' toBeRegisteredFilenames
 
-The script is used to extract transfers that failed due to a particular error. The error description should be in the 
-form of a regural expression. The script outputs the pairs of 
-source destination SURLs, thus it can be easily used as output of the `submitFTS` script. The output is printed 
-on the console.
-
-If the user can find out all the distinct errors, that occurred during the jobs transfers using the `-u` option. 
-
-Description of the rest of the input parameters is printed out when running the script with the `-h` switch.
+# to get all the transfers that failed for a specific reason, use the grepFilesByError command: 
+$ while read id; do ./grepFilesByError.py  -s 'https://fts3-devel.cern.ch:8446' $id "No such file or directory" >> files.with.errors; done < ~/job.ids
+```
