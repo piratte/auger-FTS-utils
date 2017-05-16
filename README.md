@@ -68,7 +68,7 @@ Description of the rest of the input parameters is printed out when running the 
 ## Example usage
 
 ### Tranfer example
-```
+```bash
 $ ./lfc-find-replicas.py -o transfer-input-file -r 'srm://golias100.farm.particle.cz/dpm/farm.particle.cz/home/auger/' /grid/auger/prod/B2015FixedETIronEpos_gr352/en18.500/th38.000/095487
 
 $ ./submitFTS.py -s "https://fts3-pilot.cern.ch:8446" -j exampleJobIDs -S AUGERPROD transfer-input-file

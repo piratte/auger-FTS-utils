@@ -118,13 +118,14 @@ if __name__ == "__main__":
                 transferList = []
 
         # submit the last job
-        job = createTransferJob(transferList, filename, str(numOfJobs) + " last", options.overwriteFlag)
-        if options.dryRun:
-            print json.dumps(job, indent=2)
-            jobID = 'abc'
-        else:
-            jobID = fts3.submit(context, job)
-        transferJobs.append(jobID)
+        if transferList:
+            job = createTransferJob(transferList, filename, str(numOfJobs) + " last", options.overwriteFlag)
+            if options.dryRun:
+                print json.dumps(job, indent=2)
+                jobID = 'abc'
+            else:
+                jobID = fts3.submit(context, job)
+            transferJobs.append(jobID)
 
         # if some jobs were submitted, note their IDs
         if not options.dryRun:
